@@ -13,6 +13,7 @@ class Proposal extends Model
         'title',
         'description',
         'requirements',
+        'requested_modules',
         'development_price_rbe',
         'status',
         'reviewed_by_user_id',
@@ -22,6 +23,7 @@ class Proposal extends Model
 
     protected $casts = [
         'requirements' => 'array',
+        'requested_modules' => 'array',
         'reviewed_at' => 'datetime',
     ];
 

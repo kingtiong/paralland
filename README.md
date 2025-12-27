@@ -2,8 +2,8 @@
 
 This repository is the **backend + web UI** for Paralland:
 
-- **Wallet login** (sign message / `personal_sign`)
-- **Proposal workflow**: user submits proposal → admin accepts / requests revision / rejects
+- **Web2 login/register** (email/password)
+- **Order / proposal workflow**: user submits an order (select modules) → admin accepts / requests revision / rejects
 - **Project record** created automatically when a proposal is accepted (foundation for the 24-hour delivery + chat + maintenance billing flows)
 
 Smart contracts (RBE token + minting + escrow/maintenance payments) are intended to be developed in **Remix** and integrated later.
@@ -13,7 +13,7 @@ Smart contracts (RBE token + minting + escrow/maintenance payments) are intended
 - **Laravel 12**
 - **MySQL** (recommended for production; `.env.example` is set to MySQL)
 - **Sanctum** for API tokens
-- **ethers.js** for wallet connect + message signing
+- (Optional) wallet login APIs exist, but current UI is Web2
 
 ### Quick start (local)
 
@@ -49,14 +49,14 @@ npm run build
 php artisan serve
 ```
 
-Open the UI at `http://localhost:8000/app`.
+Open the UI at `http://localhost:8000/dashboard`.
 
 ### Admin setup
 
 Admin routes are protected by an `admin` middleware. To make a wallet address an admin:
 
 ```bash
-php artisan paralland:make-admin 0xYourWalletAddressHere
+php artisan paralland:make-admin admin@example.com
 ```
 
 ### API (MVP)
