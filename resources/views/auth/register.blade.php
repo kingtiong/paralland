@@ -1,12 +1,27 @@
 <x-guest-layout>
     <div class="mb-6">
-        <div class="text-xl font-semibold text-zinc-100">Create account</div>
-        <div class="mt-1 text-sm text-zinc-400">
+        <div class="text-xl font-semibold text-zinc-100">Start Your System for USD 0.10</div>
+        <div class="mt-2 text-sm text-zinc-300">
+            Every business system begins with a single step. Today, that step costs less than a cup of coffee.
+        </div>
+        <div class="mt-3 text-sm text-zinc-400">
             Already have an account?
             <a href="{{ route('login') }}" class="text-violet-300 hover:text-violet-200 underline underline-offset-4">
-                Sign in
+                Log in
             </a>
         </div>
+    </div>
+
+    <div class="mb-6 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4 text-sm text-zinc-300">
+        <div class="font-semibold text-zinc-100">What happens after registration?</div>
+        <ul class="mt-2 space-y-1 text-zinc-300">
+            <li>- Create your first project</li>
+            <li>- Choose your system type</li>
+            <li>- Access builder tools</li>
+            <li>- Get advisory guidance</li>
+            <li>- Upgrade only when ready</li>
+        </ul>
+        <div class="mt-3 text-xs text-zinc-400">No long-term lock-in. Cancel anytime.</div>
     </div>
 
     <form method="POST" action="{{ route('register') }}">
@@ -51,7 +66,7 @@
 
         <div class="flex items-center justify-end mt-4">
             <x-primary-button class="ms-4">
-                {{ __('Register') }}
+                Start My Quest
             </x-primary-button>
         </div>
     </form>

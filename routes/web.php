@@ -11,6 +11,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::view('/pricing', 'pricing')->name('pricing');
+
 Route::redirect('/app', '/dashboard');
 
 Route::get('/dashboard', function () {

@@ -3,11 +3,14 @@
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <div class="mb-6">
-        <div class="text-xl font-semibold text-zinc-100">Sign in</div>
-        <div class="mt-1 text-sm text-zinc-400">
+        <div class="text-xl font-semibold text-zinc-100">Welcome Back to Your Quest</div>
+        <div class="mt-2 text-sm text-zinc-300">
+            Your system is waiting. Continue building, refining, and scaling your business.
+        </div>
+        <div class="mt-3 text-sm text-zinc-400">
             New here?
             <a href="{{ route('register') }}" class="text-violet-300 hover:text-violet-200 underline underline-offset-4">
-                Create an account
+                Start for USD 0.10
             </a>
         </div>
     </div>
@@ -49,9 +52,7 @@
                 </a>
             @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+            <x-primary-button class="ms-3">Log In</x-primary-button>
         </div>
     </form>
 </x-guest-layout>
