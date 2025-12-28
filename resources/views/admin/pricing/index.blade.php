@@ -49,6 +49,9 @@
                     <div class="p-6 border-b border-gray-100">
                         <div class="text-sm font-semibold text-gray-900">Modules</div>
                         <div class="mt-1 text-sm text-gray-600">Set development + monthly cost per module. Toggle active to show/hide in Step 3.</div>
+                        <div class="mt-2 text-xs text-gray-500">
+                            To delete a module, tick “Delete” and save. (Safe delete: it won’t remove past orders, it just hides the module.)
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -57,9 +60,11 @@
                                 <tr>
                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Key</th>
                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Label</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700">Description</th>
                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Dev (USDT)</th>
                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Monthly (USDT)</th>
                                     <th class="px-4 py-3 text-left font-semibold text-gray-700">Active</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700">Delete</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
@@ -70,6 +75,9 @@
                                             <x-text-input name="modules[{{ $m->id }}][label]" type="text" class="block w-full" value="{{ old("modules.{$m->id}.label", $m->label) }}" />
                                         </td>
                                         <td class="px-4 py-3">
+                                            <textarea name="modules[{{ $m->id }}][description]" rows="2" class="block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm">{{ old("modules.{$m->id}.description", $m->description) }}</textarea>
+                                        </td>
+                                        <td class="px-4 py-3">
                                             <x-text-input name="modules[{{ $m->id }}][dev_cost_usdt]" type="number" step="0.01" min="0" class="block w-40" value="{{ old("modules.{$m->id}.dev_cost_usdt", $m->dev_cost_usdt) }}" />
                                         </td>
                                         <td class="px-4 py-3">
@@ -78,6 +86,10 @@
                                         <td class="px-4 py-3">
                                             <input type="hidden" name="modules[{{ $m->id }}][is_active]" value="0">
                                             <input type="checkbox" name="modules[{{ $m->id }}][is_active]" value="1" class="rounded border-gray-300 text-violet-600 focus:ring-violet-500" @checked((bool) old("modules.{$m->id}.is_active", $m->is_active))>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <input type="hidden" name="modules[{{ $m->id }}][delete]" value="0">
+                                            <input type="checkbox" name="modules[{{ $m->id }}][delete]" value="1" class="rounded border-gray-300 text-rose-600 focus:ring-rose-500">
                                         </td>
                                     </tr>
                                 @endforeach
@@ -98,6 +110,11 @@
                             <x-input-label for="new_module_label" value="Label" />
                             <x-text-input id="new_module_label" name="new_module_label" type="text" class="mt-1 block w-full" value="{{ old('new_module_label') }}" placeholder="Custom logic" />
                             <x-input-error class="mt-2" :messages="$errors->get('new_module_label')" />
+                        </div>
+                        <div class="lg:col-span-2">
+                            <x-input-label for="new_module_description" value="Description (optional)" />
+                            <textarea id="new_module_description" name="new_module_description" rows="2" class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm">{{ old('new_module_description') }}</textarea>
+                            <x-input-error class="mt-2" :messages="$errors->get('new_module_description')" />
                         </div>
                         <div>
                             <x-input-label for="new_module_dev_cost_usdt" value="Dev (USDT)" />

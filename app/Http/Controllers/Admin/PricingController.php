@@ -38,12 +38,15 @@ class PricingController extends Controller
 
             'modules' => ['nullable', 'array'],
             'modules.*.label' => ['required', 'string', 'max:255'],
+            'modules.*.description' => ['nullable', 'string', 'max:4000'],
             'modules.*.dev_cost_usdt' => ['required', 'numeric', 'min:0'],
             'modules.*.monthly_cost_usdt' => ['required', 'numeric', 'min:0'],
             'modules.*.is_active' => ['nullable', 'boolean'],
+            'modules.*.delete' => ['nullable', 'boolean'],
 
             'new_module_key' => ['nullable', 'string', 'max:50', 'regex:/^[a-z0-9_]+$/'],
             'new_module_label' => ['nullable', 'string', 'max:255'],
+            'new_module_description' => ['nullable', 'string', 'max:4000'],
             'new_module_dev_cost_usdt' => ['nullable', 'numeric', 'min:0'],
             'new_module_monthly_cost_usdt' => ['nullable', 'numeric', 'min:0'],
         ]);
@@ -59,7 +62,13 @@ class PricingController extends Controller
                 continue;
             }
 
+            if (!empty($row['delete'])) {
+                $m->delete();
+                continue;
+            }
+
             $m->label = $row['label'];
+            $m->description = $row['description'] ?? null;
             $m->dev_cost_usdt = $row['dev_cost_usdt'];
             $m->monthly_cost_usdt = $row['monthly_cost_usdt'];
             $m->is_active = (bool) ($row['is_active'] ?? false);
@@ -71,6 +80,7 @@ class PricingController extends Controller
                 ['key' => $data['new_module_key']],
                 [
                     'label' => $data['new_module_label'],
+                    'description' => $data['new_module_description'] ?? null,
                     'dev_cost_usdt' => (float) ($data['new_module_dev_cost_usdt'] ?? 0),
                     'monthly_cost_usdt' => (float) ($data['new_module_monthly_cost_usdt'] ?? 0),
                     'is_active' => true,
