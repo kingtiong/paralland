@@ -40,7 +40,21 @@ class OrderChatController extends Controller
         if (!$request->user()->isAdmin()) {
             // Optional: notify admin via Telegram (admin replies with tag to route back).
             try {
-                app(TelegramBot::class)->sendToAdmin("[ORDER#{$order->id}] {$data['message']}");
+                $u = $request->user();
+                $base = rtrim((string) config('app.url', ''), '/');
+                $orderUrl = $base ? "{$base}/admin/orders/{$order->id}" : null;
+                $memberUrl = $base ? "{$base}/admin/members/{$u->id}" : null;
+
+                $text = "🔔 New ORDER message\n"
+                    ."Order: #{$order->id} — {$order->title}\n"
+                    ."From: {$u->name} <{$u->email}> (user_id={$u->id})\n"
+                    .($orderUrl ? "Open order: {$orderUrl}\n" : '')
+                    .($memberUrl ? "Open member: {$memberUrl}\n" : '')
+                    ."Reply tag: [ORDER#{$order->id}]\n"
+                    ."\n"
+                    ."Message:\n{$data['message']}";
+
+                app(TelegramBot::class)->sendToAdmin($text);
             } catch (\Throwable $e) {
                 Log::warning('Telegram notify failed (order chat)', [
                     'order_id' => $order->id,

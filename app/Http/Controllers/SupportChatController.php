@@ -49,7 +49,18 @@ class SupportChatController extends Controller
 
         // Optional: notify admin via Telegram (admin replies with tag to route back).
         try {
-            app(TelegramBot::class)->sendToAdmin("[SUPPORT#{$request->user()->id}] {$data['message']}");
+            $u = $request->user();
+            $base = rtrim((string) config('app.url', ''), '/');
+            $memberUrl = $base ? "{$base}/admin/members/{$u->id}" : null;
+
+            $text = "🔔 New SUPPORT message\n"
+                ."From: {$u->name} <{$u->email}> (user_id={$u->id})\n"
+                .($memberUrl ? "Open: {$memberUrl}\n" : '')
+                ."Reply tag: [SUPPORT#{$u->id}]\n"
+                ."\n"
+                ."Message:\n{$data['message']}";
+
+            app(TelegramBot::class)->sendToAdmin($text);
         } catch (\Throwable $e) {
             Log::warning('Telegram notify failed (support chat)', [
                 'user_id' => $request->user()->id,
