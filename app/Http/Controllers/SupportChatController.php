@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Conversation;
 use App\Models\ConversationMessage;
-use App\Services\TwilioWhatsApp;
+use App\Services\TelegramBot;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -46,11 +46,11 @@ class SupportChatController extends Controller
         $conversation->last_message_at = now();
         $conversation->save();
 
-        // Optional: notify admin via WhatsApp (admin replies with tag to route back).
+        // Optional: notify admin via Telegram (admin replies with tag to route back).
         try {
-            app(TwilioWhatsApp::class)->sendToAdmin("[SUPPORT#{$request->user()->id}] {$data['message']}");
+            app(TelegramBot::class)->sendToAdmin("[SUPPORT#{$request->user()->id}] {$data['message']}");
         } catch (\Throwable $e) {
-            // Don't block chat if WhatsApp is not configured or fails.
+            // Don't block chat if Telegram is not configured or fails.
         }
 
         return back()->with('status', 'Message sent.');

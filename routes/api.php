@@ -3,13 +3,13 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProposalController;
 use App\Http\Controllers\Api\Admin\ProposalController as AdminProposalController;
-use App\Http\Controllers\Webhooks\TwilioWhatsAppWebhookController;
+use App\Http\Controllers\Webhooks\TelegramWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/auth/nonce', [AuthController::class, 'nonce']);
 Route::post('/auth/verify', [AuthController::class, 'verify']);
 
-Route::post('/webhooks/twilio/whatsapp', TwilioWhatsAppWebhookController::class);
+Route::post('/webhooks/telegram', TelegramWebhookController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

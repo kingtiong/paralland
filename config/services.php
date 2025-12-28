@@ -35,12 +35,10 @@ return [
         ],
     ],
 
-    'twilio' => [
-        'account_sid' => env('TWILIO_ACCOUNT_SID'),
-        'auth_token' => env('TWILIO_AUTH_TOKEN'),
-        'from_whatsapp' => env('TWILIO_WHATSAPP_FROM'), // e.g. whatsapp:+14155238886
-        'admin_whatsapp' => env('ADMIN_WHATSAPP_TO'), // e.g. whatsapp:+60...
-        'webhook_token' => env('TWILIO_WHATSAPP_WEBHOOK_TOKEN'),
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'admin_chat_id' => env('TELEGRAM_ADMIN_CHAT_ID'),
+        'webhook_token' => env('TELEGRAM_WEBHOOK_TOKEN'),
     ],
 
 ];
