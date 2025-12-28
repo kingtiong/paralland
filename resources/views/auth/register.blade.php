@@ -1,4 +1,14 @@
 <x-guest-layout>
+    <div class="mb-6">
+        <div class="text-xl font-semibold text-zinc-100">Create account</div>
+        <div class="mt-1 text-sm text-zinc-400">
+            Already have an account?
+            <a href="{{ route('login') }}" class="text-violet-300 hover:text-violet-200 underline underline-offset-4">
+                Sign in
+            </a>
+        </div>
+    </div>
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -40,10 +50,6 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
             <x-primary-button class="ms-4">
                 {{ __('Register') }}
             </x-primary-button>
