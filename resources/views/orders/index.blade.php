@@ -36,6 +36,7 @@
                             <div class="mt-1 inline-flex rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800">
                                 {{ $order->status }}
                             </div>
+                            <div class="mt-2 text-xs text-gray-500">Wizard step: {{ $order->wizard_step ?? 1 }}/5</div>
                             <div class="mt-2 text-xs text-gray-500">{{ $order->created_at->format('Y-m-d H:i') }}</div>
                         </div>
                     </div>

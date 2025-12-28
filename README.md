@@ -51,6 +51,16 @@ php artisan serve
 
 Open the UI at `http://localhost:8000/dashboard`.
 
+### Order wizard (5 steps)
+
+Create a new order from the sidebar **New Order** button, then complete:
+
+1) Basics
+2) Content + uploads
+3) Additional functions (modules)
+4) Summary + estimate
+5) Payment (USDT, BEP20)
+
 ### Admin setup
 
 Admin routes are protected by an `admin` middleware. To make a wallet address an admin:

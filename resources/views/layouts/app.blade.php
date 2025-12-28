@@ -49,9 +49,12 @@
                         <a href="{{ route('orders.index') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('orders.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                             My Orders
                         </a>
-                        <a href="{{ route('orders.create') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('orders.create') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
-                            New Order
-                        </a>
+                        <form method="POST" action="{{ route('orders.wizard.start') }}">
+                            @csrf
+                            <button type="submit" class="w-full text-left block rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                New Order
+                            </button>
+                        </form>
 
                         <div class="pt-3 text-xs uppercase tracking-wide text-gray-500">Modules</div>
                         <a href="#" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Website</a>

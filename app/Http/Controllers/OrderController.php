@@ -19,6 +19,7 @@ class OrderController extends Controller
 
     public function create()
     {
+        // Legacy form kept for compatibility; prefer wizard.
         $modules = $this->availableModules();
         return view('orders.create', compact('modules'));
     }
