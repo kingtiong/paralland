@@ -28,6 +28,11 @@
                     @endif
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        @if (empty($modules))
+                            <div class="text-sm text-gray-600">
+                                No modules configured yet. An admin can add modules in <b>Admin → Pricing</b>.
+                            </div>
+                        @endif
                         @foreach ($modules as $m)
                             @php
                                 $checked = in_array($m['key'], old('modules', $order->requested_modules ?? []));
@@ -42,7 +47,9 @@
                                 />
                                 <div class="flex-1">
                                     <div class="text-sm font-semibold text-gray-900">{{ $m['label'] }}</div>
-                                    <div class="mt-1 text-xs text-gray-500">Estimate: ~{{ $m['price_usdt'] }} USDT</div>
+                                    <div class="mt-1 text-xs text-gray-500">
+                                        Dev: ~{{ number_format($m['dev_usdt'], 2) }} USDT · Monthly: ~{{ number_format($m['monthly_usdt'], 2) }} USDT
+                                    </div>
                                 </div>
                             </label>
                         @endforeach

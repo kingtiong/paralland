@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Auth\AdminAuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MemberController as AdminMemberController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PricingController as AdminPricingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -69,10 +70,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
         Route::get('/members/{user}', [AdminMemberController::class, 'show'])->name('members.show');
 
+        Route::get('/pricing', [AdminPricingController::class, 'index'])->name('pricing.index');
+        Route::post('/pricing', [AdminPricingController::class, 'save'])->name('pricing.save');
+
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/review', [AdminOrderController::class, 'review'])->name('orders.review');
         Route::post('/orders/{order}/payment/verify', [AdminOrderController::class, 'markPaymentVerified'])->name('orders.payment.verify');
+        Route::post('/orders/{order}/work', [AdminOrderController::class, 'updateWork'])->name('orders.work.update');
     });
 });
 

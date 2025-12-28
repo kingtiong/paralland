@@ -30,6 +30,11 @@
                                     Paid before: {{ number_format($paidTotal, 2) }} USDT (upgrade payment shows only the difference)
                                 </div>
                             @endif
+                            @if ($order->estimated_monthly_usdt !== null)
+                                <div class="mt-2 text-xs text-gray-600">
+                                    Monthly server/support (after delivery): ~{{ number_format((float) $order->estimated_monthly_usdt, 2) }} USDT / month
+                                </div>
+                            @endif
                         </div>
                         <div class="rounded-md border border-gray-200 p-4">
                             <div class="text-xs text-gray-500">Pay to address</div>

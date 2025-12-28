@@ -16,7 +16,7 @@ class OrderController extends Controller
         $orders = Proposal::query()
             ->with(['user', 'project'])
             ->latest()
-            ->get();
+            ->paginate(25);
 
         return view('admin.orders.index', compact('orders'));
     }
@@ -93,5 +93,27 @@ class OrderController extends Controller
         $order->save();
 
         return redirect()->route('admin.orders.show', $order)->with('status', 'Payment marked as verified.');
+    }
+
+    public function updateWork(Request $request, Proposal $order)
+    {
+        $data = $request->validate([
+            'work_status' => ['required', 'string', 'in:new,in_progress,waiting_client,completed'],
+            'expected_completion_date' => ['nullable', 'date'],
+        ]);
+
+        $order->work_status = $data['work_status'];
+        $order->expected_completion_date = $data['expected_completion_date'] ?? null;
+
+        if ($data['work_status'] === 'completed' && !$order->completed_at) {
+            $order->completed_at = now();
+        }
+        if ($data['work_status'] !== 'completed') {
+            $order->completed_at = null;
+        }
+
+        $order->save();
+
+        return back()->with('status', 'Work status updated.');
     }
 }

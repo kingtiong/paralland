@@ -56,13 +56,6 @@
                             </button>
                         </form>
 
-                        <div class="pt-3 text-xs uppercase tracking-wide text-gray-500">Modules</div>
-                        <a href="#" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Website</a>
-                        <a href="#" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">MLM Plan</a>
-                        <a href="#" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Payment Solution</a>
-                        <a href="#" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Marketplace</a>
-                        <a href="#" class="block rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">Admin / Backoffice</a>
-
                         @if (auth()->user()?->isAdmin())
                             <div class="pt-3 text-xs uppercase tracking-wide text-gray-500">Admin</div>
                             <a href="{{ route('admin.dashboard') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
@@ -73,6 +66,9 @@
                             </a>
                             <a href="{{ route('admin.orders.index') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.orders.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                                 Orders (Review)
+                            </a>
+                            <a href="{{ route('admin.pricing.index') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.pricing.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                                Pricing
                             </a>
                         @endif
                     </nav>

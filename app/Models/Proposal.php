@@ -31,6 +31,10 @@ class Proposal extends Model
         'payment_from_address',
         'payment_tx_hash',
         'submitted_at',
+        'work_status',
+        'expected_completion_date',
+        'completed_at',
+        'estimated_monthly_usdt',
         'reviewed_by_user_id',
         'review_note',
         'reviewed_at',
@@ -47,6 +51,9 @@ class Proposal extends Model
         'paid_modules' => 'array',
         'payment_verified_at' => 'datetime',
         'submitted_at' => 'datetime',
+        'expected_completion_date' => 'date',
+        'completed_at' => 'datetime',
+        'estimated_monthly_usdt' => 'decimal:2',
         'reviewed_at' => 'datetime',
     ];
 

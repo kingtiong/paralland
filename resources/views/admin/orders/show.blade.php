@@ -94,6 +94,9 @@
                         <div class="mt-1 font-semibold text-gray-900">
                             {{ number_format((float) ($order->estimated_total_usdt ?? 0), 2) }} USDT
                         </div>
+                        <div class="mt-1 text-xs text-gray-500">
+                            Monthly: {{ number_format((float) ($order->estimated_monthly_usdt ?? 0), 2) }} USDT / month
+                        </div>
                         <div class="mt-1 text-xs text-gray-500">Status: {{ $order->payment_status }}</div>
                     </div>
                     <div class="rounded-md border border-gray-200 p-4">
@@ -107,6 +110,23 @@
                     </div>
                 </div>
 
+                @if (is_array($order->wizard_step4_estimate) && !empty($order->wizard_step4_estimate['items']))
+                    <div class="mt-4 rounded-md border border-gray-200 overflow-hidden">
+                        <div class="bg-gray-50 px-4 py-2 text-xs font-semibold text-gray-700">Pricing breakdown</div>
+                        <div class="divide-y divide-gray-200 text-sm">
+                            @foreach (($order->wizard_step4_estimate['items'] ?? []) as $item)
+                                <div class="flex items-center justify-between px-4 py-3">
+                                    <div class="text-gray-800">{{ $item['label'] ?? ($item['key'] ?? '-') }}</div>
+                                    <div class="text-right">
+                                        <div class="font-semibold text-gray-900">{{ number_format((float) ($item['dev_usdt'] ?? 0), 2) }} dev</div>
+                                        <div class="text-xs text-gray-500">{{ number_format((float) ($item['monthly_usdt'] ?? 0), 2) }} / month</div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('admin.orders.payment.verify', $order) }}" class="mt-4 flex flex-col sm:flex-row gap-3 sm:items-end">
                     @csrf
                     <div>
@@ -115,6 +135,33 @@
                         <x-input-error class="mt-2" :messages="$errors->get('paid_total_usdt')" />
                     </div>
                     <x-primary-button>Verify payment</x-primary-button>
+                </form>
+            </div>
+
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <div class="text-sm font-semibold text-gray-900">Work status</div>
+                <div class="mt-2 text-sm text-gray-600">Track progress and expected completion date.</div>
+
+                <form method="POST" action="{{ route('admin.orders.work.update', $order) }}" class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                    @csrf
+                    <div>
+                        <x-input-label for="work_status" value="Status" />
+                        <select id="work_status" name="work_status" class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm">
+                            @foreach (['new' => 'New', 'in_progress' => 'In progress', 'waiting_client' => 'Waiting client', 'completed' => 'Completed'] as $k => $lbl)
+                                <option value="{{ $k }}" @selected(old('work_status', $order->work_status) === $k)>{{ $lbl }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error class="mt-2" :messages="$errors->get('work_status')" />
+                    </div>
+                    <div>
+                        <x-input-label for="expected_completion_date" value="Expected completion date" />
+                        <x-text-input id="expected_completion_date" name="expected_completion_date" type="date" class="mt-1 block w-full" value="{{ old('expected_completion_date', $order->expected_completion_date?->format('Y-m-d')) }}" />
+                        <x-input-error class="mt-2" :messages="$errors->get('expected_completion_date')" />
+                        <div class="mt-1 text-xs text-gray-500">Completed at: {{ $order->completed_at?->format('Y-m-d H:i') ?? '—' }}</div>
+                    </div>
+                    <div class="flex justify-end">
+                        <x-primary-button>Update</x-primary-button>
+                    </div>
                 </form>
             </div>
 

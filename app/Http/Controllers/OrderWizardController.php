@@ -6,7 +6,9 @@ use App\Http\Requests\SaveOrderStep1Request;
 use App\Http\Requests\SaveOrderStep2Request;
 use App\Http\Requests\SaveOrderStep3Request;
 use App\Http\Requests\SubmitOrderPaymentRequest;
+use App\Models\AppSetting;
 use App\Models\OrderFile;
+use App\Models\PricingModule;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -212,7 +214,8 @@ class OrderWizardController extends Controller
         $estimate = $this->estimateCost($order);
 
         $order->wizard_step4_estimate = $estimate;
-        $order->estimated_total_usdt = $estimate['total_usdt'];
+        $order->estimated_total_usdt = $estimate['dev_total_usdt'];
+        $order->estimated_monthly_usdt = $estimate['monthly_total_usdt'];
         $order->wizard_step = max((int) $order->wizard_step, 5);
         $order->status = 'pending_payment';
         $order->submitted_at = now();
@@ -260,19 +263,22 @@ class OrderWizardController extends Controller
     }
 
     /**
-     * @return array<int, array{key:string,label:string,price_usdt:int}>
+     * @return array<int, array{key:string,label:string,dev_usdt:float,monthly_usdt:float}>
      */
     private function availableModules(): array
     {
-        return [
-            ['key' => 'admin_panel', 'label' => 'Admin Panel / Back Office', 'price_usdt' => 200],
-            ['key' => 'crm', 'label' => 'CRM (Leads, Customers, Tasks)', 'price_usdt' => 150],
-            ['key' => 'inventory', 'label' => 'Inventory / Stock', 'price_usdt' => 180],
-            ['key' => 'hr', 'label' => 'Human Resources (HR)', 'price_usdt' => 200],
-            ['key' => 'payment', 'label' => 'Payment Solution / Gateway Integration', 'price_usdt' => 120],
-            ['key' => 'marketplace', 'label' => 'Marketplace / E-commerce', 'price_usdt' => 300],
-            ['key' => 'mlm', 'label' => 'MLM Commission Plan', 'price_usdt' => 500],
-        ];
+        return PricingModule::query()
+            ->where('is_active', true)
+            ->orderBy('label')
+            ->get()
+            ->map(fn ($m) => [
+                'key' => $m->key,
+                'label' => $m->label,
+                'dev_usdt' => (float) $m->dev_cost_usdt,
+                'monthly_usdt' => (float) $m->monthly_cost_usdt,
+            ])
+            ->values()
+            ->all();
     }
 
     private function estimateCost(Proposal $order): array
@@ -283,10 +289,26 @@ class OrderWizardController extends Controller
 
         $items = [];
 
+        $baseDev = AppSetting::getDecimal('base_dev_usdt', 0.10);
+        $baseMonthly = AppSetting::getDecimal('base_monthly_usdt', 20.00);
+        $items[] = [
+            'key' => 'base',
+            'label' => 'Base price',
+            'dev_usdt' => $baseDev,
+            'monthly_usdt' => $baseMonthly,
+        ];
+
         if ($needWebsite) {
-            $items[] = $websiteType === 'personal'
-                ? ['key' => 'base_personal', 'label' => 'Base personal website', 'price_usdt' => 80]
-                : ['key' => 'base_company', 'label' => 'Base company website', 'price_usdt' => 150];
+            $websiteDev = $websiteType === 'personal'
+                ? AppSetting::getDecimal('website_personal_dev_usdt', 80.00)
+                : AppSetting::getDecimal('website_company_dev_usdt', 150.00);
+
+            $items[] = [
+                'key' => $websiteType === 'personal' ? 'website_personal' : 'website_company',
+                'label' => $websiteType === 'personal' ? 'Website (Personal)' : 'Website (Company)',
+                'dev_usdt' => $websiteDev,
+                'monthly_usdt' => 0.0,
+            ];
         }
 
         $selected = $order->requested_modules ?? [];
@@ -298,13 +320,15 @@ class OrderWizardController extends Controller
             }
         }
 
-        $total = collect($items)->sum('price_usdt');
+        $devTotal = (float) collect($items)->sum('dev_usdt');
+        $monthlyTotal = (float) collect($items)->sum('monthly_usdt');
 
         return [
             'currency' => 'USDT',
             'chain' => 'BEP20',
             'items' => $items,
-            'total_usdt' => (float) $total,
+            'dev_total_usdt' => $devTotal,
+            'monthly_total_usdt' => $monthlyTotal,
             'note' => 'Estimate only. Final quote may change after review of requirements.',
         ];
     }

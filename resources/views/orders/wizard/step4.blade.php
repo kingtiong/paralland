@@ -15,6 +15,7 @@
                         <div class="text-sm font-semibold text-gray-900">Summary</div>
                         @php $s1 = $order->wizard_step1 ?? []; @endphp
                         <div class="mt-3 space-y-2 text-sm text-gray-700">
+                            <div><span class="font-medium">Website:</span> {{ ($s1['need_website'] ?? true) ? 'Yes' : 'No (existing website)' }}</div>
                             <div><span class="font-medium">Type:</span> {{ $s1['website_type'] ?? '-' }}</div>
                             <div><span class="font-medium">Purpose:</span> {{ $s1['purpose'] ?? '-' }}</div>
                             <div><span class="font-medium">Industry:</span> {{ $s1['industry'] ?? '-' }}</div>
@@ -41,13 +42,19 @@
                                 @foreach ($estimate['items'] as $item)
                                     <div class="flex items-center justify-between px-4 py-3">
                                         <div class="text-sm text-gray-800">{{ $item['label'] }}</div>
-                                        <div class="text-sm font-semibold text-gray-900">{{ number_format($item['price_usdt'], 2) }}</div>
+                                        <div class="text-right">
+                                            <div class="text-sm font-semibold text-gray-900">{{ number_format($item['dev_usdt'], 2) }} dev</div>
+                                            <div class="text-xs text-gray-500">{{ number_format($item['monthly_usdt'], 2) }} / month</div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
                             <div class="flex items-center justify-between px-4 py-3 bg-gray-50">
                                 <div class="text-sm font-semibold text-gray-900">Total</div>
-                                <div class="text-sm font-semibold text-gray-900">{{ number_format($estimate['total_usdt'], 2) }} USDT</div>
+                                <div class="text-right">
+                                    <div class="text-sm font-semibold text-gray-900">{{ number_format($estimate['dev_total_usdt'], 2) }} USDT (dev)</div>
+                                    <div class="text-xs text-gray-600">{{ number_format($estimate['monthly_total_usdt'], 2) }} USDT / month</div>
+                                </div>
                             </div>
                         </div>
                         <div class="mt-2 text-xs text-gray-500">{{ $estimate['note'] }}</div>

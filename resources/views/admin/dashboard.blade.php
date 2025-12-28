@@ -38,6 +38,9 @@
                     <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500">
                         Orders (Review)
                     </a>
+                    <a href="{{ route('admin.pricing.index') }}" class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-200">
+                        Pricing
+                    </a>
                 </div>
             </div>
         </div>
