@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TelegramBot
 {
@@ -15,6 +16,7 @@ class TelegramBot
     public function sendToAdmin(string $text): void
     {
         if (!$this->isConfigured()) {
+            Log::info('Telegram not configured; skipping notify.');
             return;
         }
 

@@ -7,6 +7,7 @@ use App\Models\ConversationMessage;
 use App\Services\TelegramBot;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class SupportChatController extends Controller
@@ -50,7 +51,10 @@ class SupportChatController extends Controller
         try {
             app(TelegramBot::class)->sendToAdmin("[SUPPORT#{$request->user()->id}] {$data['message']}");
         } catch (\Throwable $e) {
-            // Don't block chat if Telegram is not configured or fails.
+            Log::warning('Telegram notify failed (support chat)', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage(),
+            ]);
         }
 
         return back()->with('status', 'Message sent.');

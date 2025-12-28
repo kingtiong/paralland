@@ -8,6 +8,7 @@ use App\Models\Proposal;
 use App\Services\TelegramBot;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OrderChatController extends Controller
 {
@@ -41,7 +42,11 @@ class OrderChatController extends Controller
             try {
                 app(TelegramBot::class)->sendToAdmin("[ORDER#{$order->id}] {$data['message']}");
             } catch (\Throwable $e) {
-                // Don't block chat if Telegram is not configured or fails.
+                Log::warning('Telegram notify failed (order chat)', [
+                    'order_id' => $order->id,
+                    'user_id' => $request->user()->id,
+                    'error' => $e->getMessage(),
+                ]);
             }
         }
 
