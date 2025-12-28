@@ -16,8 +16,11 @@ class TelegramWebhookController extends Controller
         // Shared-secret. Telegram sends it as `X-Telegram-Bot-Api-Secret-Token`.
         // We also accept `X-Webhook-Token` for manual testing.
         $expected = (string) config('services.telegram.webhook_token', '');
+        $expected = trim($expected, " \t\n\r\0\x0B\"'");
         if ($expected !== '') {
             $provided = (string) ($request->header('X-Telegram-Bot-Api-Secret-Token') ?? $request->header('X-Webhook-Token') ?? '');
+            $provided = trim($provided, " \t\n\r\0\x0B\"'");
+
             if (!hash_equals($expected, $provided)) {
                 abort(403);
             }
