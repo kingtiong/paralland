@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Proposal;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -64,7 +65,16 @@ class OrderController extends Controller
             abort(403);
         }
 
-        return view('orders.show', ['order' => $order]);
+        $conversation = Conversation::query()
+            ->where('type', 'order')
+            ->where('proposal_id', $order->id)
+            ->with(['messages.user'])
+            ->first();
+
+        return view('orders.show', [
+            'order' => $order,
+            'conversation' => $conversation,
+        ]);
     }
 
     /**

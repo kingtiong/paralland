@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderChatController;
 use App\Http\Controllers\OrderWizardController;
 use App\Http\Controllers\OrderFileController;
+use App\Http\Controllers\SupportChatController;
 use App\Http\Controllers\Admin\Auth\AdminAuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MemberController as AdminMemberController;
@@ -31,6 +33,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create'); // legacy (kept)
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store'); // legacy (kept)
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/chat', [OrderChatController::class, 'store'])->name('orders.chat.store');
+
+    Route::get('/support/chat', [SupportChatController::class, 'show'])->name('support.chat');
+    Route::post('/support/chat', [SupportChatController::class, 'store'])->name('support.chat.store');
 
     // New: 5-step order wizard
     Route::post('/orders/wizard/start', [OrderWizardController::class, 'start'])->name('orders.wizard.start');
@@ -66,6 +72,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/review', [AdminOrderController::class, 'review'])->name('orders.review');
+        Route::post('/orders/{order}/payment/verify', [AdminOrderController::class, 'markPaymentVerified'])->name('orders.payment.verify');
     });
 });
 

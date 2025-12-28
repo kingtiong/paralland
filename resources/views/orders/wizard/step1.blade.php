@@ -10,14 +10,25 @@
             @include('orders.wizard._progress', ['order' => $order, 'step' => 1])
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <form method="POST" action="{{ route('orders.wizard.step1.save', $order) }}" class="space-y-6">
+                @php
+                    $s1 = $order->wizard_step1 ?? [];
+                @endphp
+
+                <form method="POST" action="{{ route('orders.wizard.step1.save', $order) }}" class="space-y-6" x-data="{ needWebsite: {{ old('need_website', $s1['need_website'] ?? true) ? 'true' : 'false' }} }">
                     @csrf
 
-                    @php
-                        $s1 = $order->wizard_step1 ?? [];
-                    @endphp
+                    <div class="rounded-md border border-gray-200 bg-gray-50 p-4">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" name="need_website" value="1" class="mt-1 rounded border-gray-300 text-violet-600 focus:ring-violet-500" @change="needWebsite = $event.target.checked" @checked(old('need_website', $s1['need_website'] ?? true))>
+                            <span class="text-sm text-gray-800">
+                                I need Paralland to build a website for me
+                                <span class="block text-xs text-gray-500">If you already have a website, you can skip this and only build the system modules.</span>
+                            </span>
+                        </label>
+                        <x-input-error class="mt-2" :messages="$errors->get('need_website')" />
+                    </div>
 
-                    <div>
+                    <div x-show="needWebsite" x-cloak>
                         <div class="text-sm font-medium text-gray-700">Website type</div>
                         <div class="mt-2 flex flex-wrap gap-3">
                             <label class="inline-flex items-center gap-2">
@@ -33,19 +44,25 @@
                     </div>
 
                     <div>
-                        <x-input-label for="purpose" value="Purpose of website" />
+                        <x-input-label for="purpose" value="Purpose of website/system (required)" />
                         <x-text-input id="purpose" name="purpose" type="text" class="mt-1 block w-full" value="{{ old('purpose', $s1['purpose'] ?? '') }}" placeholder="e.g. company profile, lead generation, ecommerce" />
                         <x-input-error class="mt-2" :messages="$errors->get('purpose')" />
                     </div>
 
                     <div>
-                        <x-input-label for="title" value="Website title" />
+                        <x-input-label for="website_url" value="Existing website URL (optional)" />
+                        <x-text-input id="website_url" name="website_url" type="url" class="mt-1 block w-full" value="{{ old('website_url', $s1['website_url'] ?? '') }}" placeholder="https://example.com" />
+                        <x-input-error class="mt-2" :messages="$errors->get('website_url')" />
+                    </div>
+
+                    <div x-show="needWebsite" x-cloak>
+                        <x-input-label for="title" value="Website title (optional)" />
                         <x-text-input id="title" name="title" type="text" class="mt-1 block w-full" value="{{ old('title', $s1['title'] ?? $order->title) }}" />
                         <x-input-error class="mt-2" :messages="$errors->get('title')" />
                     </div>
 
-                    <div>
-                        <x-input-label for="description" value="Short description" />
+                    <div x-show="needWebsite" x-cloak>
+                        <x-input-label for="description" value="Short description (optional)" />
                         <textarea id="description" name="description" rows="4" class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm">{{ old('description', $s1['description'] ?? $order->description) }}</textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('description')" />
                     </div>

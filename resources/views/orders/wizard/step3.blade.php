@@ -17,6 +17,16 @@
                         Select any extra systems you need. You can add more later too.
                     </div>
 
+                    @if ($order->paid_total_usdt !== null)
+                        <div class="rounded-md border border-amber-200 bg-amber-50 p-4 text-amber-900">
+                            <div class="font-semibold">Upgrades</div>
+                            <div class="mt-1 text-sm">
+                                You’ve already paid once. If you add new functions here, the system will ask you to pay the difference.
+                                Content revisions (Step 1/2) don’t require extra payment.
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @foreach ($modules as $m)
                             @php

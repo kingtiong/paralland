@@ -22,6 +22,9 @@ class Proposal extends Model
         'wizard_step2',
         'wizard_step4_estimate',
         'estimated_total_usdt',
+        'paid_total_usdt',
+        'paid_modules',
+        'payment_verified_at',
         'payment_chain',
         'payment_status',
         'payment_to_address',
@@ -40,6 +43,9 @@ class Proposal extends Model
         'wizard_step2' => 'array',
         'wizard_step4_estimate' => 'array',
         'estimated_total_usdt' => 'decimal:2',
+        'paid_total_usdt' => 'decimal:2',
+        'paid_modules' => 'array',
+        'payment_verified_at' => 'datetime',
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
     ];
@@ -57,6 +63,11 @@ class Proposal extends Model
     public function project(): HasOne
     {
         return $this->hasOne(Project::class);
+    }
+
+    public function conversation(): HasOne
+    {
+        return $this->hasOne(Conversation::class, 'proposal_id');
     }
 
     public function orderFiles(): HasMany

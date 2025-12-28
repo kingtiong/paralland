@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\ProjectMessage;
 use App\Models\Proposal;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -23,7 +24,16 @@ class OrderController extends Controller
     public function show(Proposal $order)
     {
         $order->load(['user', 'reviewedBy', 'project']);
-        return view('admin.orders.show', compact('order'));
+        $conversation = Conversation::query()
+            ->where('type', 'order')
+            ->where('proposal_id', $order->id)
+            ->with(['messages.user'])
+            ->first();
+
+        return view('admin.orders.show', [
+            'order' => $order,
+            'conversation' => $conversation,
+        ]);
     }
 
     public function review(Request $request, Proposal $order)
@@ -68,5 +78,20 @@ class OrderController extends Controller
         }
 
         return redirect()->route('admin.orders.show', $order);
+    }
+
+    public function markPaymentVerified(Request $request, Proposal $order)
+    {
+        $data = $request->validate([
+            'paid_total_usdt' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        $order->paid_total_usdt = $data['paid_total_usdt'];
+        $order->paid_modules = $order->requested_modules ?? [];
+        $order->payment_status = 'paid';
+        $order->payment_verified_at = now();
+        $order->save();
+
+        return redirect()->route('admin.orders.show', $order)->with('status', 'Payment marked as verified.');
     }
 }

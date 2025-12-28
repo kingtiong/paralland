@@ -22,9 +22,14 @@
                         <div class="rounded-md border border-gray-200 p-4">
                             <div class="text-xs text-gray-500">Amount</div>
                             <div class="mt-1 text-lg font-semibold text-gray-900">
-                                {{ number_format($order->estimated_total_usdt ?? 0, 2) }} USDT
+                                {{ number_format($amountDue ?? (float) ($order->estimated_total_usdt ?? 0), 2) }} USDT
                             </div>
                             <div class="mt-1 text-xs text-gray-500">Network: BEP20 (BSC)</div>
+                            @if (($paidTotal ?? 0) > 0)
+                                <div class="mt-1 text-xs text-gray-500">
+                                    Paid before: {{ number_format($paidTotal, 2) }} USDT (upgrade payment shows only the difference)
+                                </div>
+                            @endif
                         </div>
                         <div class="rounded-md border border-gray-200 p-4">
                             <div class="text-xs text-gray-500">Pay to address</div>

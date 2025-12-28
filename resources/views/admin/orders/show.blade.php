@@ -85,6 +85,86 @@
                     </div>
                 </form>
             </div>
+
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <div class="text-sm font-semibold text-gray-900">Payment</div>
+                <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div class="rounded-md border border-gray-200 p-4">
+                        <div class="text-xs text-gray-500">Estimated</div>
+                        <div class="mt-1 font-semibold text-gray-900">
+                            {{ number_format((float) ($order->estimated_total_usdt ?? 0), 2) }} USDT
+                        </div>
+                        <div class="mt-1 text-xs text-gray-500">Status: {{ $order->payment_status }}</div>
+                    </div>
+                    <div class="rounded-md border border-gray-200 p-4">
+                        <div class="text-xs text-gray-500">Paid (verified)</div>
+                        <div class="mt-1 font-semibold text-gray-900">
+                            {{ $order->paid_total_usdt !== null ? number_format((float) $order->paid_total_usdt, 2) : '—' }} USDT
+                        </div>
+                        <div class="mt-1 text-xs text-gray-500">
+                            Verified at: {{ $order->payment_verified_at?->format('Y-m-d H:i') ?? '—' }}
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('admin.orders.payment.verify', $order) }}" class="mt-4 flex flex-col sm:flex-row gap-3 sm:items-end">
+                    @csrf
+                    <div>
+                        <x-input-label for="paid_total_usdt" value="Mark payment verified (USDT)" />
+                        <x-text-input id="paid_total_usdt" name="paid_total_usdt" type="number" step="0.01" min="0" class="mt-1 block w-full" value="{{ old('paid_total_usdt', $order->estimated_total_usdt ?? 0) }}" />
+                        <x-input-error class="mt-2" :messages="$errors->get('paid_total_usdt')" />
+                    </div>
+                    <x-primary-button>Verify payment</x-primary-button>
+                </form>
+            </div>
+
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <div class="text-sm font-semibold text-gray-900">Chat</div>
+                        <div class="mt-1 text-sm text-gray-600">Communicate with the member about this order.</div>
+                    </div>
+                    <div class="text-xs text-gray-500">Order #{{ $order->id }}</div>
+                </div>
+
+                <div class="mt-4 rounded-md border border-gray-200 bg-gray-50 p-4">
+                    @php
+                        $msgs = $conversation?->messages ?? collect();
+                    @endphp
+
+                    @if ($msgs->isEmpty())
+                        <div class="text-sm text-gray-600">No messages yet.</div>
+                    @else
+                        <div class="space-y-3">
+                            @foreach ($msgs as $m)
+                                <div class="flex gap-3">
+                                    <div class="w-28 shrink-0 text-xs text-gray-500">
+                                        <div class="font-medium text-gray-700">
+                                            {{ $m->sender_type === 'admin' ? 'Admin' : ($m->sender_type === 'system' ? 'System' : 'Member') }}
+                                        </div>
+                                        <div>{{ $m->created_at->format('Y-m-d H:i') }}</div>
+                                    </div>
+                                    <div class="flex-1 rounded-md bg-white border border-gray-200 p-3 text-sm text-gray-900 whitespace-pre-wrap">
+                                        {{ $m->message }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <form method="POST" action="{{ route('orders.chat.store', $order) }}" class="mt-4 space-y-3">
+                    @csrf
+                    <div>
+                        <x-input-label for="message" value="Message (admin)" />
+                        <textarea id="message" name="message" rows="3" class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm" placeholder="Reply to member...">{{ old('message') }}</textarea>
+                        <x-input-error class="mt-2" :messages="$errors->get('message')" />
+                    </div>
+                    <div class="flex items-center justify-end">
+                        <x-primary-button>Send</x-primary-button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </x-app-layout>

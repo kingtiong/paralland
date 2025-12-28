@@ -47,18 +47,39 @@ class OrderWizardController extends Controller
 
         $products = $this->splitLines($data['products_services'] ?? '');
 
+        $needWebsite = (bool) ($data['need_website'] ?? false);
+        $websiteType = (string) ($data['website_type'] ?? 'company');
+        if (!in_array($websiteType, ['company', 'personal'], true)) {
+            $websiteType = 'company';
+        }
+
+        $title = trim((string) ($data['title'] ?? ''));
+        $description = trim((string) ($data['description'] ?? ''));
+
         $order->wizard_step1 = [
-            'website_type' => $data['website_type'],
+            'need_website' => $needWebsite,
+            'website_type' => $websiteType,
+            'website_url' => $data['website_url'] ?? null,
             'purpose' => $data['purpose'],
-            'title' => $data['title'],
-            'description' => $data['description'],
+            'title' => $title ?: null,
+            'description' => $description ?: null,
             'address' => $data['address'] ?? null,
             'contact_phone' => $data['contact_phone'] ?? null,
             'industry' => $data['industry'] ?? null,
             'products_services' => $products,
         ];
-        $order->title = $data['title'];
-        $order->description = $data['description'];
+
+        // Keep a reasonable title for listings, even if user skips details.
+        if ($title !== '') {
+            $order->title = $title;
+        } elseif (!$order->title || $order->title === 'Draft order') {
+            $order->title = 'Draft order';
+        }
+
+        if ($description !== '') {
+            $order->description = $description;
+        }
+
         $order->wizard_step = max((int) $order->wizard_step, 2);
         $order->save();
 
@@ -152,8 +173,21 @@ class OrderWizardController extends Controller
         $available = collect($this->availableModules())->pluck('key')->all();
         $selected = array_values(array_unique(array_intersect($request->validated()['modules'] ?? [], $available)));
 
+        $previous = $order->requested_modules ?? [];
+        $added = array_values(array_diff($selected, $previous));
+
         $order->requested_modules = $selected;
         $order->wizard_step = max((int) $order->wizard_step, 4);
+
+        // If the member adds new functions after the order was already paid/verified,
+        // require another payment confirmation (difference is handled in Step 5).
+        if (count($added) > 0 && ($order->paid_total_usdt !== null || $order->payment_verified_at !== null)) {
+            $order->payment_status = 'unpaid';
+            $order->status = 'pending_payment';
+            $order->payment_tx_hash = null;
+            $order->payment_from_address = null;
+        }
+
         $order->save();
 
         return redirect()->route('orders.wizard.step4', $order);
@@ -192,10 +226,15 @@ class OrderWizardController extends Controller
         $this->authorizeOrder($request, $order);
 
         $payTo = $order->payment_to_address ?: (string) config('services.usdt_bep20.treasury_address', env('USDT_BEP20_TREASURY_ADDRESS', ''));
+        $estimated = (float) ($order->estimated_total_usdt ?? 0);
+        $paid = (float) ($order->paid_total_usdt ?? 0);
+        $amountDue = max(0.0, $estimated - $paid);
 
         return view('orders.wizard.step5', [
             'order' => $order,
             'payTo' => $payTo,
+            'amountDue' => $amountDue,
+            'paidTotal' => $paid,
         ]);
     }
 
@@ -239,16 +278,20 @@ class OrderWizardController extends Controller
     private function estimateCost(Proposal $order): array
     {
         $step1 = $order->wizard_step1 ?? [];
+        $needWebsite = (bool) Arr::get($step1, 'need_website', true);
         $websiteType = (string) Arr::get($step1, 'website_type', 'company');
 
-        $base = $websiteType === 'personal'
-            ? ['key' => 'base_personal', 'label' => 'Base personal website', 'price_usdt' => 80]
-            : ['key' => 'base_company', 'label' => 'Base company website', 'price_usdt' => 150];
+        $items = [];
+
+        if ($needWebsite) {
+            $items[] = $websiteType === 'personal'
+                ? ['key' => 'base_personal', 'label' => 'Base personal website', 'price_usdt' => 80]
+                : ['key' => 'base_company', 'label' => 'Base company website', 'price_usdt' => 150];
+        }
 
         $selected = $order->requested_modules ?? [];
         $catalog = collect($this->availableModules())->keyBy('key');
 
-        $items = [$base];
         foreach ($selected as $key) {
             if ($catalog->has($key)) {
                 $items[] = $catalog->get($key);

@@ -23,6 +23,9 @@
                     <a href="{{ route('orders.index') }}" class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-200">
                         Project Overview
                     </a>
+                    <a href="{{ route('support.chat') }}" class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-200">
+                        Chat with customer service
+                    </a>
                     <a href="{{ route('pricing') }}" class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-200">
                         Pricing philosophy
                     </a>
