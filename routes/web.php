@@ -4,6 +4,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderWizardController;
 use App\Http\Controllers\OrderFileController;
+use App\Http\Controllers\Admin\Auth\AdminAuthenticatedSessionController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\MemberController as AdminMemberController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,10 +49,24 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{order}/wizard/step-5', [OrderWizardController::class, 'submitStep5'])->name('orders.wizard.step5.submit');
 });
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-    Route::post('/orders/{order}/review', [AdminOrderController::class, 'review'])->name('orders.review');
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [AdminAuthenticatedSessionController::class, 'create'])->name('login');
+        Route::post('/login', [AdminAuthenticatedSessionController::class, 'store']);
+    });
+
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::post('/logout', [AdminAuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
+        Route::get('/members/{user}', [AdminMemberController::class, 'show'])->name('members.show');
+
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+        Route::post('/orders/{order}/review', [AdminOrderController::class, 'review'])->name('orders.review');
+    });
 });
 
 require __DIR__.'/auth.php';

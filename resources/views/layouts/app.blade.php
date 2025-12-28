@@ -65,6 +65,12 @@
 
                         @if (auth()->user()?->isAdmin())
                             <div class="pt-3 text-xs uppercase tracking-wide text-gray-500">Admin</div>
+                            <a href="{{ route('admin.dashboard') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                                Admin Dashboard
+                            </a>
+                            <a href="{{ route('admin.members.index') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.members.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                                Members
+                            </a>
                             <a href="{{ route('admin.orders.index') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.orders.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                                 Orders (Review)
                             </a>
