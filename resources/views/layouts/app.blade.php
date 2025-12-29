@@ -70,6 +70,9 @@
                             <a href="{{ route('admin.pricing.index') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.pricing.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
                                 Pricing
                             </a>
+                            <a href="{{ route('admin.maintenance.index') }}" class="block rounded-md px-3 py-2 text-sm font-medium {{ request()->routeIs('admin.maintenance.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-700 hover:bg-gray-50' }}">
+                                Monthly payments
+                            </a>
                         @endif
                     </nav>
                 </div>

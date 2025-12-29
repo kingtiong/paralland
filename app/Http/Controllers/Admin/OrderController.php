@@ -15,8 +15,18 @@ class OrderController extends Controller
     {
         $orders = Proposal::query()
             ->with(['user', 'project'])
-            ->latest()
-            ->paginate(25);
+            ->when(request('work_status'), function ($q, $ws) {
+                $q->where('work_status', $ws);
+            })
+            ->when(request('payment_status'), function ($q, $ps) {
+                $q->where('payment_status', $ps);
+            })
+            ->when(request('status'), function ($q, $s) {
+                $q->where('status', $s);
+            })
+            ->orderByDesc('created_at')
+            ->paginate(25)
+            ->withQueryString();
 
         return view('admin.orders.index', compact('orders'));
     }

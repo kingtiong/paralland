@@ -13,6 +13,14 @@
                         <div class="text-sm text-gray-500">Member</div>
                         <div class="mt-1 text-lg font-semibold text-gray-900">{{ $member->name }}</div>
                         <div class="text-sm text-gray-600">{{ $member->email }}</div>
+                        <div class="mt-2 text-xs">
+                            <span class="font-semibold text-gray-700">Email verified:</span>
+                            @if ($member->email_verified_at)
+                                <span class="text-emerald-700">Yes ({{ $member->email_verified_at->format('Y-m-d H:i') }})</span>
+                            @else
+                                <span class="text-rose-700">No</span>
+                            @endif
+                        </div>
                         <div class="mt-2 text-xs text-gray-500">
                             Joined: {{ optional($member->created_at)->toDayDateTimeString() }}
                         </div>
@@ -25,6 +33,14 @@
                         <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500">
                             Review orders
                         </a>
+                        @if (! $member->email_verified_at)
+                            <form method="POST" action="{{ route('admin.members.verify_email', $member) }}">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500">
+                                    Mark verified
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>

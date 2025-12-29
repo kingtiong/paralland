@@ -13,6 +13,7 @@ class MaintenanceInvoice extends Model
         'amount_usdt',
         'status',
         'paid_at',
+        'last_reminded_at',
         'payment_tx_hash',
         'paid_wallet_address',
         'split_server_usdt',
@@ -23,6 +24,7 @@ class MaintenanceInvoice extends Model
     protected $casts = [
         'due_date' => 'date',
         'paid_at' => 'datetime',
+        'last_reminded_at' => 'datetime',
         'amount_usdt' => 'decimal:2',
         'split_server_usdt' => 'decimal:2',
         'split_team_usdt' => 'decimal:2',

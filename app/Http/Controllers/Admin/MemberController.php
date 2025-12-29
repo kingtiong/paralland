@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class MemberController extends Controller
@@ -36,6 +37,16 @@ class MemberController extends Controller
             'member' => $user,
             'orders' => $orders,
         ]);
+    }
+
+    public function markVerified(User $user): RedirectResponse
+    {
+        if (!$user->email_verified_at) {
+            $user->email_verified_at = now();
+            $user->save();
+        }
+
+        return back()->with('status', 'Member marked as email-verified.');
     }
 }
 

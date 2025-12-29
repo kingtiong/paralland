@@ -7,6 +7,46 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+            <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                <form method="GET" action="{{ route('admin.orders.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                    <div>
+                        <div class="text-xs font-semibold text-gray-700">Work status</div>
+                        <select name="work_status" class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm">
+                            <option value="">All</option>
+                            @foreach (['new' => 'New', 'in_progress' => 'In progress', 'waiting_client' => 'Waiting client', 'completed' => 'Completed'] as $k => $label)
+                                <option value="{{ $k }}" @selected(request('work_status') === $k)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-gray-700">Payment status</div>
+                        <select name="payment_status" class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm">
+                            <option value="">All</option>
+                            @foreach (['unpaid' => 'Unpaid', 'pending' => 'Pending', 'paid' => 'Paid'] as $k => $label)
+                                <option value="{{ $k }}" @selected(request('payment_status') === $k)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold text-gray-700">Order status</div>
+                        <select name="status" class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm">
+                            <option value="">All</option>
+                            @foreach (['draft' => 'Draft', 'submitted' => 'Submitted', 'accepted' => 'Accepted', 'revision_requested' => 'Revision requested', 'rejected' => 'Rejected'] as $k => $label)
+                                <option value="{{ $k }}" @selected(request('status') === $k)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="inline-flex items-center rounded-md bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500">
+                            Filter
+                        </button>
+                        <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-200">
+                            Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+
             <div class="bg-white shadow-sm sm:rounded-lg overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 text-sm">

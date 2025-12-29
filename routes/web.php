@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\MemberController as AdminMemberController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PricingController as AdminPricingController;
+use App\Http\Controllers\Admin\MaintenanceInvoiceController as AdminMaintenanceInvoiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,7 +26,7 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -69,6 +70,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/members', [AdminMemberController::class, 'index'])->name('members.index');
         Route::get('/members/{user}', [AdminMemberController::class, 'show'])->name('members.show');
+        Route::post('/members/{user}/verify-email', [AdminMemberController::class, 'markVerified'])->name('members.verify_email');
 
         Route::get('/pricing', [AdminPricingController::class, 'index'])->name('pricing.index');
         Route::post('/pricing', [AdminPricingController::class, 'save'])->name('pricing.save');
@@ -78,6 +80,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/orders/{order}/review', [AdminOrderController::class, 'review'])->name('orders.review');
         Route::post('/orders/{order}/payment/verify', [AdminOrderController::class, 'markPaymentVerified'])->name('orders.payment.verify');
         Route::post('/orders/{order}/work', [AdminOrderController::class, 'updateWork'])->name('orders.work.update');
+
+        Route::get('/maintenance', [AdminMaintenanceInvoiceController::class, 'index'])->name('maintenance.index');
     });
 });
 
