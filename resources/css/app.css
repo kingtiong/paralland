@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Prevent Alpine-driven flashes (drawer/menu, etc.) */
+[x-cloak] { display: none !important; }
