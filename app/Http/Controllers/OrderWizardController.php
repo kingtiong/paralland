@@ -17,6 +17,8 @@ use Illuminate\Support\Str;
 
 class OrderWizardController extends Controller
 {
+    private const YEARLY_SERVER_DISCOUNT_PCT = 20;
+
     public function start(Request $request)
     {
         $payTo = (string) config('services.usdt_bep20.treasury_address', env('USDT_BEP20_TREASURY_ADDRESS', ''));
@@ -320,8 +322,14 @@ class OrderWizardController extends Controller
             }
         }
 
-        $devTotal = (float) collect($items)->sum('dev_usdt');
-        $monthlyTotal = (float) collect($items)->sum('monthly_usdt');
+        $devTotalCents = (int) collect($items)->sum(fn ($i) => $this->toCents((float) ($i['dev_usdt'] ?? 0)));
+        $monthlyTotalCents = (int) collect($items)->sum(fn ($i) => $this->toCents((float) ($i['monthly_usdt'] ?? 0)));
+
+        $devTotal = $this->fromCents($devTotalCents);
+        $monthlyTotal = $this->fromCents($monthlyTotalCents);
+
+        $yearlyBeforeDiscountCents = $monthlyTotalCents * 12;
+        $yearlyDiscountedCents = $this->applyPercentDiscountCents($yearlyBeforeDiscountCents, self::YEARLY_SERVER_DISCOUNT_PCT);
 
         return [
             'currency' => 'USDT',
@@ -329,8 +337,28 @@ class OrderWizardController extends Controller
             'items' => $items,
             'dev_total_usdt' => $devTotal,
             'monthly_total_usdt' => $monthlyTotal,
+            'yearly_discount_pct' => self::YEARLY_SERVER_DISCOUNT_PCT,
+            'yearly_total_usdt' => $this->fromCents($yearlyDiscountedCents),
+            'yearly_before_discount_usdt' => $this->fromCents($yearlyBeforeDiscountCents),
             'note' => 'Estimate only. Final quote may change after review of requirements.',
         ];
+    }
+
+    private function toCents(float $amount): int
+    {
+        return (int) round($amount * 100);
+    }
+
+    private function fromCents(int $cents): float
+    {
+        return $cents / 100;
+    }
+
+    private function applyPercentDiscountCents(int $cents, int $discountPct): int
+    {
+        $pct = max(0, min(100, $discountPct));
+        // Round half-up to nearest cent.
+        return intdiv($cents * (100 - $pct) + 50, 100);
     }
 
     private function suggestContent(Proposal $order): array
