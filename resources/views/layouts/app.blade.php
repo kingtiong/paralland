@@ -18,6 +18,7 @@
         <div x-data="{ drawerOpen: false }" class="min-h-screen bg-gray-100">
             <!-- Mobile overlay -->
             <div
+                x-cloak
                 x-show="drawerOpen"
                 x-transition.opacity
                 class="fixed inset-0 bg-black/40 z-40 lg:hidden"
@@ -26,6 +27,7 @@
 
             <!-- Drawer / Sidebar -->
             <aside
+                x-cloak
                 class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 transform transition-transform lg:translate-x-0 lg:static lg:inset-auto"
                 :class="{ '-translate-x-full': !drawerOpen, 'translate-x-0': drawerOpen }"
             >

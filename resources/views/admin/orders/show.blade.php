@@ -35,8 +35,11 @@
                 <div class="mt-6">
                     <div class="text-sm font-medium text-gray-700">Modules</div>
                     <div class="mt-2 flex flex-wrap gap-2">
+                        @php
+                            $labelsByKey = collect($order->wizard_step4_estimate['items'] ?? [])->mapWithKeys(fn ($i) => [($i['key'] ?? '') => ($i['label'] ?? null)]);
+                        @endphp
                         @foreach (($order->requested_modules ?? []) as $m)
-                            <span class="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">{{ $m }}</span>
+                            <span class="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">{{ $labelsByKey->get($m) ?? $m }}</span>
                         @endforeach
                     </div>
                 </div>
@@ -97,6 +100,11 @@
                         <div class="mt-1 text-xs text-gray-500">
                             Monthly: {{ number_format((float) ($order->estimated_monthly_usdt ?? 0), 2) }} USDT / month
                         </div>
+                        @if (is_array($order->wizard_step4_estimate) && !empty($order->wizard_step4_estimate['yearly_total_usdt']) && !empty($order->wizard_step4_estimate['yearly_discount_pct']))
+                            <div class="mt-1 text-xs text-gray-500">
+                                Yearly ({{ (int) $order->wizard_step4_estimate['yearly_discount_pct'] }}% off): {{ number_format((float) $order->wizard_step4_estimate['yearly_total_usdt'], 2) }} USDT / year
+                            </div>
+                        @endif
                         <div class="mt-1 text-xs text-gray-500">Status: {{ $order->payment_status }}</div>
                     </div>
                     <div class="rounded-md border border-gray-200 p-4">

@@ -25,8 +25,11 @@
                         <div class="mt-4">
                             <div class="text-sm font-medium text-gray-900">Modules</div>
                             <div class="mt-2 flex flex-wrap gap-2">
+                                @php
+                                    $labelsByKey = collect($estimate['items'] ?? [])->mapWithKeys(fn ($i) => [($i['key'] ?? '') => ($i['label'] ?? null)]);
+                                @endphp
                                 @foreach (($order->requested_modules ?? []) as $m)
-                                    <span class="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">{{ $m }}</span>
+                                    <span class="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700">{{ $labelsByKey->get($m) ?? $m }}</span>
                                 @endforeach
                                 @if (empty($order->requested_modules))
                                     <span class="text-xs text-gray-500">No extra modules selected.</span>
@@ -54,6 +57,11 @@
                                 <div class="text-right">
                                     <div class="text-sm font-semibold text-gray-900">{{ number_format($estimate['dev_total_usdt'], 2) }} USDT (dev)</div>
                                     <div class="text-xs text-gray-600">{{ number_format($estimate['monthly_total_usdt'], 2) }} USDT / month</div>
+                                    @if (!empty($estimate['yearly_total_usdt']) && !empty($estimate['yearly_discount_pct']))
+                                        <div class="text-xs text-gray-600">
+                                            Or yearly ({{ (int) $estimate['yearly_discount_pct'] }}% off): {{ number_format((float) $estimate['yearly_total_usdt'], 2) }} USDT / year
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

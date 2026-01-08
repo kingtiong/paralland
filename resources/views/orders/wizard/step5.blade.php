@@ -34,6 +34,11 @@
                                 <div class="mt-2 text-xs text-gray-600">
                                     Monthly server/support (after delivery): ~{{ number_format((float) $order->estimated_monthly_usdt, 2) }} USDT / month
                                 </div>
+                                @if (is_array($order->wizard_step4_estimate) && !empty($order->wizard_step4_estimate['yearly_total_usdt']) && !empty($order->wizard_step4_estimate['yearly_discount_pct']))
+                                    <div class="mt-1 text-xs text-gray-600">
+                                        Or yearly ({{ (int) $order->wizard_step4_estimate['yearly_discount_pct'] }}% off): ~{{ number_format((float) $order->wizard_step4_estimate['yearly_total_usdt'], 2) }} USDT / year
+                                    </div>
+                                @endif
                             @endif
                         </div>
                         <div class="rounded-md border border-gray-200 p-4">
