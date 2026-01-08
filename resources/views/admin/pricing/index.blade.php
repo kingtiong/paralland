@@ -13,6 +13,13 @@
                 </div>
             @endif
 
+            @if ($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-900 shadow-sm sm:rounded-lg p-4 text-sm">
+                    <div class="font-semibold">Could not save pricing</div>
+                    <div class="mt-1">Please fix the highlighted fields below and try again.</div>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('admin.pricing.save') }}" class="space-y-4">
                 @csrf
 
@@ -72,16 +79,39 @@
                                     <tr>
                                         <td class="px-4 py-3 font-mono text-xs text-gray-700">{{ $m->key }}</td>
                                         <td class="px-4 py-3">
-                                            <x-text-input name="modules[{{ $m->id }}][label]" type="text" class="block w-full" value="{{ old("modules.{$m->id}.label", $m->label) }}" />
+                                            <input
+                                                name="modules[{{ $m->id }}][label]"
+                                                type="text"
+                                                class="block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm"
+                                                value="{{ old("modules.{$m->id}.label", $m->label) }}"
+                                            />
+                                            <x-input-error class="mt-1" :messages="$errors->get(\"modules.{$m->id}.label\")" />
                                         </td>
                                         <td class="px-4 py-3">
                                             <textarea name="modules[{{ $m->id }}][description]" rows="2" class="block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm">{{ old("modules.{$m->id}.description", $m->description) }}</textarea>
+                                            <x-input-error class="mt-1" :messages="$errors->get(\"modules.{$m->id}.description\")" />
                                         </td>
                                         <td class="px-4 py-3">
-                                            <x-text-input name="modules[{{ $m->id }}][dev_cost_usdt]" type="number" step="0.01" min="0" class="block w-40" value="{{ old("modules.{$m->id}.dev_cost_usdt", $m->dev_cost_usdt) }}" />
+                                            <input
+                                                name="modules[{{ $m->id }}][dev_cost_usdt]"
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                class="block w-40 rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm"
+                                                value="{{ old("modules.{$m->id}.dev_cost_usdt", $m->dev_cost_usdt) }}"
+                                            />
+                                            <x-input-error class="mt-1" :messages="$errors->get(\"modules.{$m->id}.dev_cost_usdt\")" />
                                         </td>
                                         <td class="px-4 py-3">
-                                            <x-text-input name="modules[{{ $m->id }}][monthly_cost_usdt]" type="number" step="0.01" min="0" class="block w-40" value="{{ old("modules.{$m->id}.monthly_cost_usdt", $m->monthly_cost_usdt) }}" />
+                                            <input
+                                                name="modules[{{ $m->id }}][monthly_cost_usdt]"
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                class="block w-40 rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm"
+                                                value="{{ old("modules.{$m->id}.monthly_cost_usdt", $m->monthly_cost_usdt) }}"
+                                            />
+                                            <x-input-error class="mt-1" :messages="$errors->get(\"modules.{$m->id}.monthly_cost_usdt\")" />
                                         </td>
                                         <td class="px-4 py-3">
                                             <input type="hidden" name="modules[{{ $m->id }}][is_active]" value="0">
