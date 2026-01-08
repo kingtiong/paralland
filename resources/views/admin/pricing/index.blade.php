@@ -85,11 +85,11 @@
                                                 class="block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm"
                                                 value="{{ old("modules.{$m->id}.label", $m->label) }}"
                                             />
-                                            <x-input-error class="mt-1" :messages="$errors->get(\"modules.{$m->id}.label\")" />
+                                            <x-input-error class="mt-1" :messages="$errors->get('modules.'.$m->id.'.label')" />
                                         </td>
                                         <td class="px-4 py-3">
                                             <textarea name="modules[{{ $m->id }}][description]" rows="2" class="block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm">{{ old("modules.{$m->id}.description", $m->description) }}</textarea>
-                                            <x-input-error class="mt-1" :messages="$errors->get(\"modules.{$m->id}.description\")" />
+                                            <x-input-error class="mt-1" :messages="$errors->get('modules.'.$m->id.'.description')" />
                                         </td>
                                         <td class="px-4 py-3">
                                             <input
@@ -100,7 +100,7 @@
                                                 class="block w-40 rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm"
                                                 value="{{ old("modules.{$m->id}.dev_cost_usdt", $m->dev_cost_usdt) }}"
                                             />
-                                            <x-input-error class="mt-1" :messages="$errors->get(\"modules.{$m->id}.dev_cost_usdt\")" />
+                                            <x-input-error class="mt-1" :messages="$errors->get('modules.'.$m->id.'.dev_cost_usdt')" />
                                         </td>
                                         <td class="px-4 py-3">
                                             <input
@@ -111,7 +111,7 @@
                                                 class="block w-40 rounded-md border-gray-300 focus:border-violet-500 focus:ring-violet-500 shadow-sm text-sm"
                                                 value="{{ old("modules.{$m->id}.monthly_cost_usdt", $m->monthly_cost_usdt) }}"
                                             />
-                                            <x-input-error class="mt-1" :messages="$errors->get(\"modules.{$m->id}.monthly_cost_usdt\")" />
+                                            <x-input-error class="mt-1" :messages="$errors->get('modules.'.$m->id.'.monthly_cost_usdt')" />
                                         </td>
                                         <td class="px-4 py-3">
                                             <input type="hidden" name="modules[{{ $m->id }}][is_active]" value="0">
